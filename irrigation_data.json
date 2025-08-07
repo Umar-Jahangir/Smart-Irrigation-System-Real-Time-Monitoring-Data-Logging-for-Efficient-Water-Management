@@ -1,0 +1,15 @@
+{
+  "daily_data": {
+    "2025-08-07": {
+      "water_used": 0.0,
+      "events": 0
+    }
+  },
+  "hourly_data": {
+    "2025-08-07 14:00": {
+      "water_used": 0.0,
+      "moisture": 1011
+    }
+  },
+  "last_updated": "2025-08-07T17:04:53.471433"
+}

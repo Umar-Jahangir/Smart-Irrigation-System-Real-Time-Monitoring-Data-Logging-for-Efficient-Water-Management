@@ -15,6 +15,7 @@ class SmartIrrigationMonitor:
         self.baudrate = baudrate
         self.serial_connection = None
         self.is_connected = False
+        self.total_water_used = 0.0
         
         # Irrigation data
         self.current_moisture = 0
@@ -120,6 +121,12 @@ class SmartIrrigationMonitor:
                                    fg='#f39c12', bg='#34495e')
         self.events_label.grid(row=0, column=1, padx=20)
         
+        self.total_label = tk.Label(stats_inner_frame, 
+                          text=f"Lifetime Total: {self.total_water_used:.2f} L",
+                          font=('Arial', 12),
+                          fg='#3498db', bg='#34495e')
+        self.total_label.grid(row=1, column=0, columnspan=2, pady=5)
+
         # Recent Activity Section
         activity_frame = tk.LabelFrame(self.root, text="Recent Activity", 
                                      font=('Arial', 14, 'bold'),
@@ -220,9 +227,7 @@ class SmartIrrigationMonitor:
                 break
     
     def process_arduino_data(self, data):
-        """Process incoming Arduino data"""
-        if data.startswith("IRRIGATION_DATA:"):
-            # Format: IRRIGATION_DATA:MOISTURE=350,PUMP=0,WATER_USED=1.5,EVENTS=2
+        if data.startswith("IRRIGATION_DATA:"):  # Make sure this matches exactly what Arduino sends
             try:
                 data_part = data.replace("IRRIGATION_DATA:", "")
                 params = {}
@@ -232,40 +237,29 @@ class SmartIrrigationMonitor:
                         params[key] = int(value)
                     elif key == "PUMP":
                         params[key] = bool(int(value))
-                    elif key == "WATER_USED":
+                    elif key in ["WATER_USED", "TOTAL"]:
                         params[key] = float(value)
                     elif key == "EVENTS":
                         params[key] = int(value)
                 
-                # Update values
-                old_moisture = self.current_moisture
+                # These lines WERE incorrectly indented before!
                 self.current_moisture = params.get("MOISTURE", 0)
                 self.pump_status = params.get("PUMP", False)
                 self.total_water_used_today = params.get("WATER_USED", 0.0)
                 self.watering_events_today = params.get("EVENTS", 0)
+                self.total_water_used = params.get("TOTAL", 0.0)
                 
-                # Update historical data
                 self.update_historical_data()
-                
-                # Update GUI
                 self.root.after(0, self.update_gui)
                 
-                # Log significant changes
-                if old_moisture != self.current_moisture:
-                    status = "DRY" if self.current_moisture > self.dry_threshold else "WET" if self.current_moisture < self.wet_threshold else "OK"
-                    self.add_activity(f"🌱 Moisture changed: {self.current_moisture} ({status})")
+                self.add_activity(
+                    f"Water: {params.get('WATER_USED', 0):.2f}L (Today: {self.total_water_used_today:.2f}L)"
+                )
                 
-                if self.pump_status:
-                    self.add_activity("🚰 Pump activated - Watering in progress")
-                
-            except Exception as e:
+            except ValueError as e:
                 print(f"Data parsing error: {e}")
+                self.add_activity(f"[ERROR] Bad data: {data}")
         
-        elif data.startswith("ALERT:"):
-            self.add_activity(f"⚠️ {data.replace('ALERT:', '')}")
-        
-        elif data.startswith("STATUS:"):
-            self.add_activity(f"ℹ️ {data.replace('STATUS:', '')}")
     
     def update_historical_data(self):
         """Update historical data records"""
@@ -301,6 +295,7 @@ class SmartIrrigationMonitor:
             color = '#f39c12'  # Orange
             
         self.moisture_status.config(text=f"Status: {status}", fg=color)
+        self.total_label.config(text=f"Lifetime Total: {self.total_water_used:.2f} L")
         
         # Update pump status
         self.pump_label.config(text=f"Pump: {'ACTIVE' if self.pump_status else 'INACTIVE'}",

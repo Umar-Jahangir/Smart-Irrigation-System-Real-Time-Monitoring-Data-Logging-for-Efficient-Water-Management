@@ -1,0 +1,20 @@
+{
+  "daily_data": {
+    "2025-08-07": {
+      "water_used": 0.0,
+      "events": 0
+    }
+  },
+  "hourly_data": {
+    "2025-08-07 14:00": {
+      "water_used": 0.0,
+      "moisture": 1011
+    }
+  },
+  "thresholds": {
+    "dry": 400,
+    "wet": 200,
+    "flow_rate": 1.0
+  },
+  "last_updated": "2025-08-07T16:45:56.438128"
+}
