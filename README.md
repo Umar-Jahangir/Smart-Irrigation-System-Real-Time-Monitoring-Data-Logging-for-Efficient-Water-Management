@@ -69,3 +69,26 @@ Select Arduino UNO board
 Upload to the board
 Run Dashboard
 python smart_irrigation_dashboard.py
+
+This will open the Smart Irrigation Dashboard GUI with tabs for:
+Current Status
+Recent Activity
+Graphs (every minute, Daily, Monthly, Yearly Trends)
+Data Export
+
+⚙️ Configuration
+Update COM Port in smart_irrigation_dashboard.py (port='COM6') as per your Arduino connection.
+Modify Flow Rate (L/min) in the Python file to match your pump’s specifications.
+
+🤝 Contributing
+Fork the repo
+Create a new branch (git checkout -b feature-xyz)
+Commit changes (git commit -m "Added feature xyz")
+Push to branch (git push origin feature-xyz)
+Open a Pull Request 🎉
+
+🏭 Industrial Applications
+Smart Farming / Agriculture
+Greenhouses
+Home Gardening
+Water Conservation Projects
