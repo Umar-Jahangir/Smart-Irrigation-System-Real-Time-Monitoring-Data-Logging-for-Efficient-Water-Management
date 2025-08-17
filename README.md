@@ -58,3 +58,6 @@ cd Smart-Irrigation-System-Real-Time-Monitoring-Data-Logging-for-Efficient-Water
 python -m venv venv
 venv\Scripts\activate       # On Windows
 source venv/bin/activate    # On Linux/Mac
+
+### 3️⃣ Install Dependencies
+pip install pyserial matplotlib pandas numpy
