@@ -53,3 +53,8 @@ A **Smart Irrigation System** that automatically monitors soil moisture, control
 ```bash
 git clone https://github.com/Umar-Jahangir/Smart-Irrigation-System-Real-Time-Monitoring-Data-Logging-for-Efficient-Water-Management.git
 cd Smart-Irrigation-System-Real-Time-Monitoring-Data-Logging-for-Efficient-Water-Management
+
+### 2️⃣ Setup Python Environment
+python -m venv venv
+venv\Scripts\activate       # On Windows
+source venv/bin/activate    # On Linux/Mac
