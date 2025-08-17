@@ -61,3 +61,11 @@ source venv/bin/activate    # On Linux/Mac
 
 ### 3️⃣ Install Dependencies
 pip install pyserial matplotlib pandas numpy
+
+### ▶️ Usage
+Upload Arduino Code
+Open Irrigating/Irrigating.ino in Arduino IDE
+Select Arduino UNO board
+Upload to the board
+Run Dashboard
+python smart_irrigation_dashboard.py
