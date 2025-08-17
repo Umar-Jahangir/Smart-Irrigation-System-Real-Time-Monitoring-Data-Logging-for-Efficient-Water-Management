@@ -65,10 +65,14 @@ A **Smart Irrigation System** that automatically monitors soil moisture, control
 git clone https://github.com/Umar-Jahangir/Smart-Irrigation-System-Real-Time-Monitoring-Data-Logging-for-Efficient-Water-Management.git
 cd Smart-Irrigation-System-Real-Time-Monitoring-Data-Logging-for-Efficient-Water-Management
 
+---
+
 ### 2️⃣ Setup Python Environment
 python -m venv venv
 venv\Scripts\activate       # On Windows
 source venv/bin/activate    # On Linux/Mac
+
+---
 
 ### 3️⃣ Install Dependencies
 pip install pyserial matplotlib pandas numpy
