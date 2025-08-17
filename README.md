@@ -20,11 +20,11 @@ A **Smart Irrigation System** that automatically monitors soil moisture, control
 |----------------|----------------------|
 | <img width="400" src="https://github.com/user-attachments/assets/da44ec2c-f268-4cb1-a237-6793e2ce69e7" /> | <img width="400" src="https://github.com/user-attachments/assets/32cf93f1-b0b8-44a9-883e-b46869c4ce43" /> |
 
-| Water Usage Graphs | Daily/Monthly Trends |
+| Recent Activity | Water Usage Graphs |
 |--------------------|-----------------------|
 | <img width="400" src="https://github.com/user-attachments/assets/ecd62a37-64e6-4120-ba51-be8327a7809f" /> | <img width="400" src="https://github.com/user-attachments/assets/9ca7528b-4409-41b4-90e3-ca085b04d691" /> |
 
-| Hardware Setup |
+| Data Export |
 |----------------|
 | <img width="500" src="https://github.com/user-attachments/assets/9b4cb18a-0413-4c41-99d9-7052289e225c" /> |
 
