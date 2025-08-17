@@ -1,15 +1,177 @@
 {
-  "daily_data": {
-    "2025-08-07": {
+  "minute_data": {
+    "2025-08-17 07:41": {
       "water_used": 0.0,
-      "events": 0
+      "moisture": 300,
+      "events": 0,
+      "pump_duration": 0.0
+    },
+    "2025-08-17 07:42": {
+      "water_used": 0.14,
+      "moisture": 300,
+      "events": 3,
+      "pump_duration": 8.0
+    },
+    "2025-08-17 07:43": {
+      "water_used": 0.14,
+      "moisture": 300,
+      "events": 3,
+      "pump_duration": 0.0
+    },
+    "2025-08-17 07:44": {
+      "water_used": 0.2,
+      "moisture": 300,
+      "events": 4,
+      "pump_duration": 4.0
+    },
+    "2025-08-17 07:45": {
+      "water_used": 0.2,
+      "moisture": 300,
+      "events": 4,
+      "pump_duration": 0.0
+    },
+    "2025-08-17 07:46": {
+      "water_used": 0.1,
+      "moisture": 300,
+      "events": 2,
+      "pump_duration": 6.0
+    },
+    "2025-08-17 07:47": {
+      "water_used": 0.1,
+      "moisture": 300,
+      "events": 2,
+      "pump_duration": 0.0
+    },
+    "2025-08-17 07:48": {
+      "water_used": 0.1,
+      "moisture": 300,
+      "events": 2,
+      "pump_duration": 0.0
+    },
+    "2025-08-17 07:49": {
+      "water_used": 0.1,
+      "moisture": 300,
+      "events": 2,
+      "pump_duration": 0.0
+    },
+    "2025-08-17 07:50": {
+      "water_used": 0.07,
+      "moisture": 300,
+      "events": 1,
+      "pump_duration": 4.0
+    },
+    "2025-08-17 07:51": {
+      "water_used": 0.07,
+      "moisture": 300,
+      "events": 1,
+      "pump_duration": 0.0
+    },
+    "2025-08-17 07:52": {
+      "water_used": 0.07,
+      "moisture": 300,
+      "events": 1,
+      "pump_duration": 0.0
+    },
+    "2025-08-17 07:53": {
+      "water_used": 0.0,
+      "moisture": 300,
+      "events": 0,
+      "pump_duration": 0.0
+    },
+    "2025-08-17 07:54": {
+      "water_used": 0.07,
+      "moisture": 300,
+      "events": 1,
+      "pump_duration": 4.0
+    },
+    "2025-08-17 07:55": {
+      "water_used": 0.07,
+      "moisture": 300,
+      "events": 1,
+      "pump_duration": 0.0
+    },
+    "2025-08-17 07:57": {
+      "water_used": 0.07,
+      "moisture": 300,
+      "events": 1,
+      "pump_duration": 4.0
+    },
+    "2025-08-17 07:58": {
+      "water_used": 0.07,
+      "moisture": 300,
+      "events": 1,
+      "pump_duration": 0.0
+    },
+    "2025-08-17 07:59": {
+      "water_used": 0.07,
+      "moisture": 300,
+      "events": 1,
+      "pump_duration": 0.0
+    },
+    "2025-08-17 08:03": {
+      "water_used": 0.28,
+      "moisture": 700,
+      "events": 2,
+      "pump_duration": 36.0
+    },
+    "2025-08-17 08:04": {
+      "water_used": 0.28,
+      "moisture": 700,
+      "events": 2,
+      "pump_duration": 32.0
     }
   },
   "hourly_data": {
     "2025-08-07 14:00": {
       "water_used": 0.0,
       "moisture": 1011
+    },
+    "2025-08-17 07:00": {
+      "water_used": 0.07,
+      "moisture": 300,
+      "events": 1,
+      "pump_duration": 30.0
+    },
+    "2025-08-17 08:00": {
+      "water_used": 0.28,
+      "moisture": 700,
+      "events": 2,
+      "pump_duration": 68.0
     }
   },
-  "last_updated": "2025-08-07T17:04:53.471433"
+  "daily_data": {
+    "2025-08-07": {
+      "water_used": 0.0,
+      "events": 0
+    },
+    "2025-08-17": {
+      "water_used": 0.28,
+      "moisture_avg": 700,
+      "events": 2,
+      "pump_duration": 98.0
+    }
+  },
+  "monthly_data": {
+    "2025-08": {
+      "water_used": 0.28,
+      "moisture_avg": 0,
+      "events": 2,
+      "pump_duration": 98.0
+    }
+  },
+  "yearly_data": {
+    "2025": {
+      "water_used": 0.28,
+      "moisture_avg": 0,
+      "events": 2,
+      "pump_duration": 98.0
+    }
+  },
+  "settings": {
+    "dry_threshold": 400,
+    "wet_threshold": 200,
+    "flow_rate": 1.0,
+    "port": "COM6"
+  },
+  "last_updated": "2025-08-17T15:55:41.025558"
 }

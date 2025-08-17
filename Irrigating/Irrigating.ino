@@ -1,106 +1,127 @@
 #include <Wire.h>
 #include "RTClib.h"
 
-// Pin definitions
-const int moistureSensorPin = A0;  // Analog input
-const int relayPin = 8;
+RTC_DS3231 rtc;
 
-// Water flow parameters
-float flowRate = 1.0; // liters per minute
+// Pin definitions
+#define RELAY_PIN 3
+#define SOIL_PIN 6   // Digital output from soil moisture sensor
+
+// Flow Rate in liters/minute (adjust based on your pump)
+float flowRate = 1.0;  
+
+// Variables
+bool pumpStatus = false;
+bool prevPumpStatus = false;
 unsigned long pumpStartTime = 0;
 float totalWaterUsed = 0.0;
-float todayWaterUsed = 0.0;
-unsigned int wateringEventsToday = 0;
+float waterUsedToday = 0.0;
+int wateringEventsToday = 0;
 
-// Moisture thresholds (calibrate these!)
-int dryThreshold = 600;  // Higher value = drier soil (adjust after calibration)
-int wetThreshold = 300;  // Lower value = wetter soil (adjust after calibration)
-
-RTC_DS3231 rtc;
+DateTime lastDate;
 
 void setup() {
   Serial.begin(9600);
-  while (!Serial); // Wait for serial connection
+  pinMode(RELAY_PIN, OUTPUT);
+  pinMode(SOIL_PIN, INPUT);
   
-  pinMode(relayPin, OUTPUT);
-  digitalWrite(relayPin, HIGH); // Start with pump OFF (active LOW relay)
-  
+  // Make sure pump is OFF initially
+  digitalWrite(RELAY_PIN, HIGH);  // HIGH = OFF for most relay modules
+
   if (!rtc.begin()) {
-    Serial.println("ERROR: RTC not found");
+    Serial.println("RTC not found!");
     while (1);
   }
 
   if (rtc.lostPower()) {
-    Serial.println("WARNING: RTC lost power, resetting time");
+    // Set RTC to compile time if power lost
     rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   }
 
-  Serial.println("System ready");
-  Serial.println("-------------------");
-  Serial.println("Calibration Mode:");
-  Serial.print("Dry Threshold: "); Serial.println(dryThreshold);
-  Serial.print("Wet Threshold: "); Serial.println(wetThreshold);
-  Serial.println("-------------------");
+  lastDate = rtc.now();
+  
+  Serial.println("Smart Irrigation System Started");
+  Serial.println("Digital Soil Sensor Logic (CORRECTED):");
+  Serial.println("- HIGH = DRY soil (pump ON)");
+  Serial.println("- LOW = WET soil (pump OFF)");
 }
 
 void loop() {
-  // Read analog moisture value (0-1023)
-  int moistureValue = analogRead(moistureSensorPin);
+  DateTime now = rtc.now();
+
+  // Reset daily water usage at midnight
+  if (now.day() != lastDate.day()) {
+    waterUsedToday = 0;
+    wateringEventsToday = 0;
+    Serial.println("Daily counters reset - New day!");
+  }
+  lastDate = now;
+
+  int soilStatus = digitalRead(SOIL_PIN);
   
-  Serial.print("Moisture: ");
-  Serial.print(moistureValue);
-  
-  // Control logic
-  if (moistureValue > dryThreshold) {
-    Serial.println(" - DRY (Needs water)");
-    if (digitalRead(relayPin) == HIGH) { // If pump is off
-      startWatering();
+  // Debug: Print raw sensor reading
+  Serial.print("Raw sensor: "); Serial.println(soilStatus == HIGH ? "HIGH (DRY)" : "LOW (WET)");
+
+  // CORRECTED Soil sensor logic:
+  // HIGH (1) = DRY soil → turn pump ON
+  // LOW (0) = WET soil → turn pump OFF
+  if (soilStatus == HIGH) {
+    // Soil is DRY - turn pump ON
+    if (!pumpStatus) {
+      Serial.println(">>> SOIL DRY - TURNING PUMP ON <<<");
+      pumpStartTime = millis();
+      wateringEventsToday++;
     }
-  } 
-  else if (moistureValue < wetThreshold) {
-    Serial.println(" - WET (Enough water)");
-    if (digitalRead(relayPin) == LOW) { // If pump is on
-      stopWatering();
-    }
+    digitalWrite(RELAY_PIN, LOW);  // RELAY ON (most relays are active LOW)
+    pumpStatus = true;
   } 
   else {
-    Serial.println(" - OK (Moisture adequate)");
+    // Soil is WET - turn pump OFF
+    if (pumpStatus) {
+      Serial.println(">>> SOIL WET - TURNING PUMP OFF <<<");
+      unsigned long durationMs = millis() - pumpStartTime;
+      float durationMin = durationMs / 60000.0; // convert ms → minutes
+      float waterSupplied = flowRate * durationMin;
+      waterUsedToday += waterSupplied;
+      totalWaterUsed += waterSupplied;
+      
+      Serial.print("Watering completed: ");
+      Serial.print(durationMin, 2);
+      Serial.print(" minutes, ");
+      Serial.print(waterSupplied, 2);
+      Serial.println(" liters");
+    }
+    digitalWrite(RELAY_PIN, HIGH); // RELAY OFF (most relays are active LOW)
+    pumpStatus = false;
   }
-  sendIrrigationData();
-  delay(2000); // 2 second delay between readings
-}
 
-void startWatering() {
-  digitalWrite(relayPin, LOW); // Activate relay (LOW=ON for active LOW relays)
-  pumpStartTime = millis();
-  Serial.println("ACTION: Pump STARTED");
-}
+  prevPumpStatus = pumpStatus;
 
-void stopWatering() {
-  digitalWrite(relayPin, HIGH); // Deactivate relay
-  unsigned long durationMinutes = (millis() - pumpStartTime) / 60000;
-  float litersUsed = flowRate * durationMinutes;
+  // Send data to Python Dashboard
+  // For dashboard compatibility: send higher number when DRY, lower when WET
+  int moistureDisplay = (soilStatus == HIGH) ? 700 : 300;  // DRY=700, WET=300
   
-  // Update totals
-  totalWaterUsed += litersUsed;
-  todayWaterUsed += litersUsed;
-  wateringEventsToday++;
-
-  // Print report
-  Serial.print("ACTION: Pump STOPPED after ");
-  Serial.print(durationMinutes, 1);
-  Serial.print(" minutes, used ");
-  Serial.print(litersUsed, 2);
-  Serial.println(" liters");
-  Serial.println("-------------------");
-}
-
-void sendIrrigationData() {
-  Serial.print("IRRIGATION_DATA:");  // Make sure this matches Python's expectation
-  Serial.print("MOISTURE="); Serial.print(analogRead(moistureSensorPin)); 
-  Serial.print(",PUMP="); Serial.print(digitalRead(relayPin) == LOW ? 1 : 0); // 1=ON, 0=OFF
-  Serial.print(",WATER_USED="); Serial.print(todayWaterUsed, 2);
-  Serial.print(",EVENTS="); Serial.print(wateringEventsToday);
+  Serial.print("IRRIGATION_DATA:");
+  Serial.print("MOISTURE="); Serial.print(moistureDisplay);
+  Serial.print(",PUMP="); Serial.print(pumpStatus ? 1 : 0);
+  Serial.print(",WATER_USED="); Serial.print(waterUsedToday, 2);
   Serial.print(",TOTAL="); Serial.print(totalWaterUsed, 2);
-  Serial.println(); // Ensure newline at end
+  Serial.print(",EVENTS="); Serial.print(wateringEventsToday);
+  Serial.print(",TIME="); 
+  
+  // Format time with leading zeros
+  Serial.print(now.year()); Serial.print("-");
+  if (now.month() < 10) Serial.print("0");
+  Serial.print(now.month()); Serial.print("-");
+  if (now.day() < 10) Serial.print("0");
+  Serial.print(now.day()); Serial.print(" ");
+  if (now.hour() < 10) Serial.print("0");
+  Serial.print(now.hour()); Serial.print(":");
+  if (now.minute() < 10) Serial.print("0");
+  Serial.print(now.minute()); Serial.print(":");
+  if (now.second() < 10) Serial.print("0");
+  Serial.print(now.second());
+  Serial.println();
+
+  delay(2000); // send update every 2s
 }
